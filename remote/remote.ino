@@ -1,15 +1,93 @@
-#include "Teleop.h"
+#include <PRIZM.h>
+
+#define CHANNEL1 1
+#define CHANNEL2 2
+#define CHANNEL3 3
+#define CHANNEL4 4
+
+#define DEADBAND 5
+
+
+//structure to hold incoming rc data
+struct inputs_t{
+  uint8_t c1;
+  uint8_t c2;
+  uint8_t c3;
+  uint8_t c4;
+}inputs_t;
+
+//structure to hold motor speeds
+struct speeds_t{
+  int left_motor;
+  int right_motor;
+  int servo1;
+  int servo2;
+}speeds_t;
+
+void readData(inputs_t*);
+void calc_speeds(inputs_t*, speeds_t*);
+void resetData(inputs_t*);
+void drive(speeds_t*)
+int deadband(int, int, int);
+
+struct speeds_t* speeds;
+struct inputs_t* inputs;
 
 PRIZM prizm;
-Teleop teleop(prizm, 5, 1, 2, 3, 4);
+
 void setup(){
+  Serial.begin(9600);
+  pinMode(CHANNEL4, INPUT);
+  pinMode(CHANNEL3, INPUT);
+  pinMode(CHANNEL2, INPUT);
+  pinMode(CHANNEL1, INPUT);
 }
 
 void loop(){
-  teleop.drive();
+  readData(inputs);
+  calc_speeds(inputs, speeds);
+  prizm.setMotorPowers(speeds.left_motor, speeds.right_motor);
+  prizm.setServoPosition(c3, speeds.servo1);
+  prizm.setServoPosition(c4, speeds.servo2);
 }
 
+void calc_speeds(inputs_t* inputs, speeds_t* speeds){
+  //servo position    0-180
+  //motor speed    -100-100
 
+  speeds->servo1 = deadband(map(inputs->c3, 0,1023, 0,180), 90, DEADBAND);
+  speeds->servo2 = deadband(map(inputs->c4, 0,1023, 0,180), 90, DEADBAND);
+  int x = map(inputs->c1, 0, 1023, -100,100);
+  int y = map(inputs->c2, 0, 1023, -100,100);
+  //invert a motor?
+  //left =  (ly+rx)/2
+  //right = (ly-rx)/2
+  speeds->left_motor = deadband((y + x)/2, 0, DEADBAND);
+  speeds->right_motor = deadband((y + x)/2, 0, DEADBAND);
+}
+
+void readData(inputs_t* inputs){
+  inputs->c1 = pulseIn(c1, HIGH);
+  inputs->c2 = pulseIn(c2, HIGH);
+  inputs->c3 = pulseIn(c3, HIGH);
+  inputs->c4 = pulseIn(c4, HIGH);
+}
+
+void resetData(inputs_t* inputs){
+  inputs->c1 = 0; 
+  inputs->c2 = 0; 
+  inputs->c3 = 0; 
+  inputs->c4 = 0; 
+}
+
+int deadband(int data, int midpoint, int range){
+  if(data > midpoint && data < midpoint + range)
+    return midpoint;
+  else if(data < midpoint && data > midpoint - range)
+    return midpoint;
+  else
+    return data;
+}
 
 
 
