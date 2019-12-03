@@ -1,19 +1,19 @@
 #include <PRIZM.h>
 
-#define CHANNEL1 1
-#define CHANNEL2 2
-#define CHANNEL3 3
-#define CHANNEL4 4
+#define CHANNEL1 3
+#define CHANNEL2 5
+#define CHANNEL3 4
+#define CHANNEL4 2
 
 #define DEADBAND 5
 
 
 //structure to hold incoming rc data
 struct inputs_t{
-  uint8_t c1;
-  uint8_t c2;
-  uint8_t c3;
-  uint8_t c4;
+  int c1;
+  int c2;
+  int c3;
+  int c4;
 }inputs_t;
 
 //structure to hold motor speeds
@@ -24,10 +24,10 @@ struct speeds_t{
   int servo2;
 }speeds_t;
 
-void readData(inputs_t*);
-void calc_speeds(inputs_t*, speeds_t*);
-void resetData(inputs_t*);
-void drive(speeds_t*)
+void readData(struct inputs_t*);
+void calc_speeds(struct inputs_t*, struct speeds_t*);
+void resetData(struct inputs_t*);
+void drive(struct speeds_t*);
 int deadband(int, int, int);
 
 struct speeds_t* speeds;
@@ -37,6 +37,8 @@ PRIZM prizm;
 
 void setup(){
   Serial.begin(9600);
+  prizm.PrizmBegin();
+  Serial.println("asdf");
   pinMode(CHANNEL4, INPUT);
   pinMode(CHANNEL3, INPUT);
   pinMode(CHANNEL2, INPUT);
@@ -44,14 +46,23 @@ void setup(){
 }
 
 void loop(){
-  readData(inputs);
-  calc_speeds(inputs, speeds);
-  prizm.setMotorPowers(speeds.left_motor, speeds.right_motor);
-  prizm.setServoPosition(c3, speeds.servo1);
-  prizm.setServoPosition(c4, speeds.servo2);
+  //readData(inputs);
+  //calc_speeds(inputs, speeds);
+  Serial.print("channel 1: ");
+  Serial.print(pulseIn(CHANNEL1, HIGH));
+  Serial.print(" channel 2: ");
+  Serial.print(pulseIn(CHANNEL2, HIGH));
+  Serial.print(" channel 3: ");
+  Serial.print(pulseIn(CHANNEL3, HIGH));
+  Serial.print(" channel 4: ");
+  Serial.println(pulseIn(CHANNEL4, HIGH));
+  //Serial.println(pulseIn(CHANNEL3, HIGH));
+  //prizm.setMotorPowers(speeds->left_motor, speeds->right_motor);
+  //prizm.setServoPosition(CHANNEL3, speeds->servo1);
+  //prizm.setServoPosition(CHANNEL4, speeds->servo2);
 }
 
-void calc_speeds(inputs_t* inputs, speeds_t* speeds){
+void calc_speeds(struct inputs_t* inputs, struct speeds_t* speeds){
   //servo position    0-180
   //motor speed    -100-100
 
@@ -66,14 +77,15 @@ void calc_speeds(inputs_t* inputs, speeds_t* speeds){
   speeds->right_motor = deadband((y + x)/2, 0, DEADBAND);
 }
 
-void readData(inputs_t* inputs){
-  inputs->c1 = pulseIn(c1, HIGH);
-  inputs->c2 = pulseIn(c2, HIGH);
-  inputs->c3 = pulseIn(c3, HIGH);
-  inputs->c4 = pulseIn(c4, HIGH);
+void readData(struct inputs_t* inputs){
+  inputs->c1 = pulseIn(CHANNEL1, HIGH);
+  //Serial.println(inputs->c1);
+  inputs->c2 = pulseIn(CHANNEL2, HIGH);
+  inputs->c3 = pulseIn(CHANNEL3, HIGH);
+  inputs->c4 = pulseIn(CHANNEL4, HIGH);
 }
 
-void resetData(inputs_t* inputs){
+void resetData(struct inputs_t* inputs){
   inputs->c1 = 0; 
   inputs->c2 = 0; 
   inputs->c3 = 0; 
