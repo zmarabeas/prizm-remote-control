@@ -1,96 +1,85 @@
 #include <PRIZM.h>
 
-#define CHANNEL1 3
-#define CHANNEL2 5
-#define CHANNEL3 4
-#define CHANNEL4 2
 
-#define DEADBAND 5
+#define LY 3
+#define LX 5
+#define RY 4
+#define RX 2
 
-
-//structure to hold incoming rc data
-struct inputs_t{
-  int c1;
-  int c2;
-  int c3;
-  int c4;
-}inputs_t;
-
-//structure to hold motor speeds
-struct speeds_t{
-  int left_motor;
-  int right_motor;
-  int servo1;
-  int servo2;
-}speeds_t;
-
-void readData(struct inputs_t*);
-void calc_speeds(struct inputs_t*, struct speeds_t*);
-void resetData(struct inputs_t*);
-void drive(struct speeds_t*);
-int deadband(int, int, int);
-
-struct speeds_t* speeds;
-struct inputs_t* inputs;
+#define DEADBAND 8
 
 PRIZM prizm;
+int ly_mid, lx_mid, ry_mid, rx_mid;
 
 void setup(){
   Serial.begin(9600);
   prizm.PrizmBegin();
-  Serial.println("asdf");
-  pinMode(CHANNEL4, INPUT);
-  pinMode(CHANNEL3, INPUT);
-  pinMode(CHANNEL2, INPUT);
-  pinMode(CHANNEL1, INPUT);
+  prizm.setMotorInvert(1,1);
+  pinMode(LY, INPUT);
+  pinMode(LX, INPUT);
+  pinMode(RY, INPUT);
+  pinMode(RX, INPUT);
+  Serial.print("Calibrating");
+  ly_mid = pulseIn(LY, HIGH);
+  delay(500);
+  Serial.print(".");
+  lx_mid = pulseIn(LX, HIGH);
+  delay(500);
+  Serial.print(".");
+  ry_mid = pulseIn(RY, HIGH);
+  delay(500);
+  Serial.print(".");
+  rx_mid = pulseIn(RX, HIGH);
+  delay(500);
+  Serial.println(".");
+  Serial.println("Complete");
+  Serial.println("-------------------");
+  Serial.print("ly midpoint: ");
+  Serial.print(ly_mid);
+  Serial.print(" lx midpoint: ");
+  Serial.print(lx_mid);
+  Serial.print(" ry midpoint: ");
+  Serial.print(ry_mid);
+  Serial.print(" rx midpoint: ");
+  Serial.println(rx_mid);
+  delay(5000);
 }
 
 void loop(){
-  //readData(inputs);
-  //calc_speeds(inputs, speeds);
-  Serial.print("channel 1: ");
-  Serial.print(pulseIn(CHANNEL1, HIGH));
-  Serial.print(" channel 2: ");
-  Serial.print(pulseIn(CHANNEL2, HIGH));
-  Serial.print(" channel 3: ");
-  Serial.print(pulseIn(CHANNEL3, HIGH));
-  Serial.print(" channel 4: ");
-  Serial.println(pulseIn(CHANNEL4, HIGH));
-  //Serial.println(pulseIn(CHANNEL3, HIGH));
-  //prizm.setMotorPowers(speeds->left_motor, speeds->right_motor);
-  //prizm.setServoPosition(CHANNEL3, speeds->servo1);
-  //prizm.setServoPosition(CHANNEL4, speeds->servo2);
-}
+  int ly = pulseIn(LY, HIGH);
+  int lx = pulseIn(LX, HIGH);
+  int ry = pulseIn(RY, HIGH);
+  int rx = pulseIn(RX, HIGH);
+  ly = constrain(ly, 900, 1500);
+  ly = map(ly, 900, 1500, 100, -100);
+  ly = deadband(ly, 0, DEADBAND);
 
-void calc_speeds(struct inputs_t* inputs, struct speeds_t* speeds){
-  //servo position    0-180
-  //motor speed    -100-100
+  lx = map(lx, 1000, 2000, 100, -100);
+  lx = deadband(lx, 0, DEADBAND);
 
-  speeds->servo1 = deadband(map(inputs->c3, 0,1023, 0,180), 90, DEADBAND);
-  speeds->servo2 = deadband(map(inputs->c4, 0,1023, 0,180), 90, DEADBAND);
-  int x = map(inputs->c1, 0, 1023, -100,100);
-  int y = map(inputs->c2, 0, 1023, -100,100);
-  //invert a motor?
-  //left =  (ly+rx)/2
+  ry = map(ry, 1000, 2000, 180, 0);
+  ry = deadband(ry, 90, DEADBAND);
+
+  rx = constrain(rx, 900, 1500);
+  rx = map(rx, 900, 1500, 180, 0);
+  rx = deadband(rx, 90, DEADBAND);
+
+  //left = (ly+rx)/2
   //right = (ly-rx)/2
-  speeds->left_motor = deadband((y + x)/2, 0, DEADBAND);
-  speeds->right_motor = deadband((y + x)/2, 0, DEADBAND);
+  prizm.setMotorPowers((ly+lx)/2, (ly-lx)/2);
+  prizm.setServoPosition(2, ry);
+  prizm.setServoPosition(3, rx);
+
+  Serial.print("LY: ");
+  Serial.print(ly);
+  Serial.print(" LX: ");
+  Serial.print(lx);
+  Serial.print(" RY: ");
+  Serial.print(ry);
+  Serial.print(" RX: ");
+  Serial.println(rx);
 }
 
-void readData(struct inputs_t* inputs){
-  inputs->c1 = pulseIn(CHANNEL1, HIGH);
-  //Serial.println(inputs->c1);
-  inputs->c2 = pulseIn(CHANNEL2, HIGH);
-  inputs->c3 = pulseIn(CHANNEL3, HIGH);
-  inputs->c4 = pulseIn(CHANNEL4, HIGH);
-}
-
-void resetData(struct inputs_t* inputs){
-  inputs->c1 = 0; 
-  inputs->c2 = 0; 
-  inputs->c3 = 0; 
-  inputs->c4 = 0; 
-}
 
 int deadband(int data, int midpoint, int range){
   if(data > midpoint && data < midpoint + range)
