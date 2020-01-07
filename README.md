@@ -17,4 +17,11 @@ Copy the EasyTransferI2C folder into the arduino library folder
   - Comment/uncomment based on your motor configuration
 
 - If your motors are spinning without moving the controller, check the dials on your controller
-- They must be centered for the robot to function properly 
+  - They must be centered for the robot to function properly 
+- Servos must be wired to slot 1 or 2
+
+## Controls
+- Left stick y-axis: forward/backward
+- Left stick x-axis: spin left/right
+- Right stick y-axis: servo 1
+- Right stick x-axis: servo 2
