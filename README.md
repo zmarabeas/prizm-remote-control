@@ -18,6 +18,9 @@ Copy the EasyTransferI2C folder into the arduino library folder
 
 - If your motors are spinning without moving the controller, check the dials on your controller
   - They must be centered for the robot to function properly 
+
+## Wiring
+- Plug the wire from the box into the I2C slot on the prizm (top left slot if the green and red buttons are at the bottom).
 - Servos must be wired to slot 1 or 2
 
 ## Controls
