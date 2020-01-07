@@ -6,15 +6,15 @@
 Copy the EasyTransferI2C folder into the arduino library folder
 
 ## Instructions
-- Download or copy the prizm.ino sketch from the prizm folder.
-- Open the downloaded sketch, or create a new sketch and copy the contents of prizm.ino.
-- Upload it to your prizm.
-- If one of your motors are spinning in the wrong direction you may have to edit the following lines in prizm.ino.
+- Download or copy the prizm.ino sketch from the prizm folder
+- Open the downloaded sketch, or create a new sketch and copy the contents of prizm.ino
+- Upload it to your prizm
+- If one of your motors are spinning in the wrong direction you may have to edit the following lines in prizm.ino
   ```cpp
     prizm.setMotorInvert(2,1);
     prizm.setMotorInvert(1,1);
   ```
-  - Comment/uncomment based on your motor configuration.
+  - Comment/uncomment based on your motor configuration
 
-- If your motors are spinning without moving the controller, check the dials on your controller.
-- They must be centered for the robot to function properly. 
+- If your motors are spinning without moving the controller, check the dials on your controller
+- They must be centered for the robot to function properly 
