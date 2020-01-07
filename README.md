@@ -1,11 +1,11 @@
 # Prizm Remote Control Box 
 
-##EasyTransfer is required 
+## EasyTransfer is required 
 [Download here](https://github.com/madsci1016/Arduino-EasyTransfer) 
 
 Copy the EasyTransferI2C folder into the arduino library folder
 
-##Instructions
+## Instructions
 - Download or copy the prizm.ino sketch from the prizm folder.
 - Open the downloaded sketch, or create a new sketch and copy the contents of prizm.ino.
 - Upload it to your prizm.
@@ -16,4 +16,5 @@ Copy the EasyTransferI2C folder into the arduino library folder
   ```
   - Comment/uncomment based on your motor configuration.
 
-- If your motors are spinning without moving the controller, check if the dials on your controller are centered. 
+- If your motors are spinning without moving the controller, check the dials on your controller.
+- They must be centered for the robot to function properly. 
