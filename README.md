@@ -1,16 +1,16 @@
 # Prizm Remote Control Box 
 
-##EasyTransfer is required 
+## EasyTransfer is required 
 	[Download here](https://github.com/madsci1016/Arduino-EasyTransfer) 
 	Copy the EasyTransferI2C folder into the arduino library folder
 
-##Instructions
+## Instructions
 	Download or copy the prizm.ino sketch from the prizm folder.
 	Open the downloaded sketch, or create a new sketch and copy the contents of prizm.ino into your new sketch.
 	Upload it to your prizm.
-	
+
 	If one of your motors are spinning in the wrong direction you may have to edit the following lines in prizm.ino.
-		```c++
+		```cpp
 		prizm.setMotorInvert(2,1);
   	prizm.setMotorInvert(1,1);
   	```
