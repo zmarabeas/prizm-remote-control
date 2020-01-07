@@ -8,10 +8,10 @@
 #define DEADBAND 10
 
 typedef struct inputs{
-	int16_t ly;
-	int16_t lx;
-	int16_t ry;
-	int16_t rx;
+  int16_t ly;
+  int16_t lx;
+  int16_t ry;
+  int16_t rx;
 }inputs;
 
 volatile inputs input;
@@ -19,30 +19,30 @@ EasyTransferI2C ET;
 PRIZM prizm;
 
 void setup() {
-	Serial.begin(9600);
-	prizm.PrizmBegin();
+  Serial.begin(9600);
+  prizm.PrizmBegin();
 
   //comment/uncomment one or both based on configuration
   //prizm.setMotorInvert(2,1);
-	prizm.setMotorInvert(1,1);
+  prizm.setMotorInvert(1,1);
 
-	Wire.begin(SLAVE_ADDR);
-	ET.begin(details(input), &Wire);
-	Wire.onReceive(receiveEvent);
+  Wire.begin(SLAVE_ADDR);
+  ET.begin(details(input), &Wire);
+  Wire.onReceive(receiveEvent);
 }
         
 void loop() {
-	if(ET.receiveData()){
+  if(ET.receiveData()){
     input.ly = processData(input.ly, 1);
     input.lx = processData(input.lx, 1);
     input.ry = processData(input.ry, 0);
     input.rx = processData(input.rx, 0);
 
-		prizm.setMotorPowers((input.ly+input.lx), (input.ly-input.lx));
-  	prizm.setServoPosition(1, input.ry);
-  	prizm.setServoPosition(2, input.rx);
-    //printData(&input);		
-	}
+    prizm.setMotorPowers((input.ly+input.lx), (input.ly-input.lx));
+    prizm.setServoPosition(1, input.ry);
+    prizm.setServoPosition(2, input.rx);
+    //printData(&input);    
+  }
 }
 
 void receiveEvent(int size){}
