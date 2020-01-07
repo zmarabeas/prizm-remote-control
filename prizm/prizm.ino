@@ -1,10 +1,11 @@
 #include <Wire.h>
 #include <PRIZM.h>
 #include <EasyTransferI2C.h>
+//https://github.com/madsci1016/Arduino-EasyTransfer
+//copy EasyTransferI2C folder into arduino library folder
 
 #define SLAVE_ADDR 5
 #define DEADBAND 10
-
 
 typedef struct inputs{
 	int16_t ly;
@@ -13,15 +14,15 @@ typedef struct inputs{
 	int16_t rx;
 }inputs;
 
-int lx_mid, ly_mid, rx_mid, ry_mid = 0;
-
 volatile inputs input;
 EasyTransferI2C ET;
 PRIZM prizm;
+
 void setup() {
 	Serial.begin(9600);
-
 	prizm.PrizmBegin();
+
+  //comment/uncomment one or both based on configuration
   //prizm.setMotorInvert(2,1);
 	prizm.setMotorInvert(1,1);
 
@@ -30,8 +31,6 @@ void setup() {
 	Wire.onReceive(receiveEvent);
 }
         
-
-
 void loop() {
 	if(ET.receiveData()){
     input.ly = processData(input.ly, 1);
