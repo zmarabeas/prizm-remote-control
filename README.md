@@ -12,7 +12,7 @@ Copy the EasyTransferI2C folder into the arduino library folder
 ## Prizm code 
 - Download or copy the prizm.ino sketch from the prizm folder
 - Open the downloaded sketch, or create a new sketch and copy the contents of prizm.ino
-- Upload it to your prizm
+- Upload the program to your prizm
 - Press the green button on the prizm
 - Drive!
 
