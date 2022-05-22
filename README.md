@@ -13,6 +13,11 @@ Copy the EasyTransferI2C folder into the arduino library folder
 - Download or copy the prizm.ino sketch from the prizm folder
 - Open the downloaded sketch, or create a new sketch and copy the contents of prizm.ino
 - Upload it to your prizm
+- Press the green button on the prizm
+- Drive!
+
+## Troubleshooting
+
 - If one of your motors are spinning in the wrong direction you may have to edit the following lines in prizm.ino
   ```cpp
     prizm.setMotorInvert(2,1);
